@@ -264,17 +264,20 @@ This guide pins exact tool versions (Python 3.14.6, uv 0.11.21, Node 24.16.0, Po
     <p>Strip away the client logos and every productive day is the same eight steps. The whole point of a good setup is that steps 1–4 take minutes, not a day of Slack archaeology.</p>
   </div>
   <figure class="wide">
-    <svg viewBox="0 0 760 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The daily development loop: clone, mise install, uv sync, direnv allow, branch, code, test, commit and PR, with a repeat arrow back to branch">
+    <svg viewBox="0 0 760 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The daily development loop: clone, mise install (nice to have), uv sync, direnv allow (nice to have), branch, code, test, commit and PR, with a repeat arrow back to branch">
       <defs>
         <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#4b5258"/></marker>
         <marker id="arrA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#0e7c86"/></marker>
       </defs>
       <g font-family="IBM Plex Mono" font-size="12">
+        <!-- legend -->
+        <rect x="20" y="6" width="14" height="12" rx="6" fill="#e7f2f3" stroke="#0e7c86"/><text x="40" y="16" fill="#4b5258" font-size="11">needed</text>
+        <rect x="100" y="6" width="14" height="12" rx="6" fill="#fdf6e3" stroke="#d4a017" stroke-dasharray="3 2"/><text x="120" y="16" fill="#4b5258" font-size="11">nice to have: skip until you feel the pain it removes</text>
         <!-- row 1 -->
         <rect x="20"  y="30" width="150" height="34" rx="17" fill="#e7f2f3" stroke="#0e7c86"/><text x="95"  y="51" text-anchor="middle" fill="#1b1f23">git clone</text>
-        <rect x="210" y="30" width="150" height="34" rx="17" fill="#e7f2f3" stroke="#0e7c86"/><text x="285" y="51" text-anchor="middle" fill="#1b1f23">mise install</text>
+        <rect x="210" y="30" width="150" height="34" rx="17" fill="#fdf6e3" stroke="#d4a017" stroke-dasharray="5 3"/><text x="285" y="51" text-anchor="middle" fill="#1b1f23">mise install</text>
         <rect x="400" y="30" width="150" height="34" rx="17" fill="#e7f2f3" stroke="#0e7c86"/><text x="475" y="51" text-anchor="middle" fill="#1b1f23">uv sync</text>
-        <rect x="590" y="30" width="150" height="34" rx="17" fill="#e7f2f3" stroke="#0e7c86"/><text x="665" y="51" text-anchor="middle" fill="#1b1f23">direnv allow</text>
+        <rect x="590" y="30" width="150" height="34" rx="17" fill="#fdf6e3" stroke="#d4a017" stroke-dasharray="5 3"/><text x="665" y="51" text-anchor="middle" fill="#1b1f23">direnv allow</text>
         <line x1="170" y1="47" x2="204" y2="47" stroke="#4b5258" marker-end="url(#arr)"/>
         <line x1="360" y1="47" x2="394" y2="47" stroke="#4b5258" marker-end="url(#arr)"/>
         <line x1="550" y1="47" x2="584" y2="47" stroke="#4b5258" marker-end="url(#arr)"/>
@@ -293,12 +296,12 @@ This guide pins exact tool versions (Python 3.14.6, uv 0.11.21, Node 24.16.0, Po
         <text x="380" y="184" text-anchor="middle" fill="#0e7c86" font-size="11">repeat until invoice</text>
       </g>
     </svg>
-    <figcaption>fig 0: the daily loop. Top row happens once per repo. Bottom row, forever.</figcaption>
+    <figcaption>fig 0: the daily loop. Top row happens once per repo. Bottom row, forever. Teal is needed; yellow and dashed is nice to have: on a pure-Python project uv pins the interpreter itself, and direnv only earns its place once you juggle per-project env vars.</figcaption>
   </figure>
   <div class="codewrap"><button class="copy">copy</button><pre><code>$ git clone git@ssh.dev.azure.com:v3/nimbus-freight/logistics/nimbus-pricing &amp;&amp; cd nimbus-pricing
-$ mise install            <span class="cm"># reads .mise.toml → exact python/node, no guessing</span>
+$ mise install            <span class="cm"># nice to have: reads .mise.toml → exact python/node. Pure Python? uv pins the interpreter itself</span>
 $ uv sync                 <span class="cm"># reads uv.lock → identical deps to everyone else</span>
-$ direnv allow            <span class="cm"># loads project env vars the moment you cd in</span>
+$ direnv allow            <span class="cm"># nice to have: loads project env vars the moment you cd in</span>
 $ git switch -c feature/surcharge-rules
 <span class="cm"># ... edit; ruff fixes on save; tests in the sidebar ...</span>
 $ uv run pytest -x        <span class="cm"># -x: stop at first failure, fix, repeat</span>
@@ -499,6 +502,11 @@ $ git clone ... &amp;&amp; cd nimbus-pricing &amp;&amp; mise install &amp;&amp; 
   <h2>Setup that pays rent: configs worth stealing</h2>
   <div class="content">
     <p>Six small files. Together they <em>are</em> the bootstrap from fig 1. Put them in a <code>dotfiles</code> repo today, even an ugly one. Every comment below is load-bearing.</p>
+  </div>
+  <div class="note"><span class="lbl">SUGGESTIONS, NOT A CHECKLIST</span>
+    <p>These are pieces of a puzzle, not a mandate. Once you understand what each file does, assemble your own. The core you actually need: a committed lockfile (<code>uv.lock</code>), lint/format/test config in <code>pyproject.toml</code>, and pre-commit with secret scanning. The <code>Brewfile</code>, <code>.mise.toml</code> and <code>.envrc</code> are nice to have. On a pure-Python project uv already pins the interpreter, so mise is overkill, and a plain <code>.env</code> covers most env-var needs until you work across several clients. Add a piece when you feel the pain it removes, not before.</p>
+  </div>
+  <div class="content">
     <h3>1 · Brewfile: the machine, declared</h3>
   </div>
   <div class="codewrap"><button class="copy">copy</button><pre><code><span class="cm"># ~/dotfiles/Brewfile - restore with: brew bundle --file=Brewfile</span>
