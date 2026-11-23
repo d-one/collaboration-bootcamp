@@ -556,6 +556,9 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]  <span class="cm"># errors, imports, bugbear, modernize, simplify</span>
 
+[tool.uv]
+exclude-newer = "7 days"  <span class="cm"># dependency cooldown: resolve only releases older than a week (uv 0.9.17+); exempt an urgent patch via exclude-newer-package</span>
+
 [tool.pytest.ini_options]
 addopts = "-q --strict-markers"
 testpaths = ["tests"]</code></pre></div>

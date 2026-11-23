@@ -425,6 +425,7 @@ conn = connect(
     <tr><td>prefer a zero-retention / business / API tier for client work</td><td>inputs stored in logs you don't control</td><td>plan choice + the provider's data terms</td></tr>
     <tr><td>scope what autocomplete &amp; indexing can read</td><td>silent upload of files you didn't mean to share</td><td>an ignore file (e.g. <code>.aiignore</code>/<code>.cursorignore</code>); disable indexing on sensitive repos</td></tr>
     <tr><td>secret-scanning pre-commit hook</td><td>an AI-suggested or pasted key reaching the repo</td><td><code>gitleaks</code> in pre-commit; see the <a href="/collaboration-bootcamp/git-survival-guide/#setup">git guide</a></td></tr>
+    <tr><td>dependency cooldown</td><td>a just-published malicious or hijacked release landing in your lockfile before anyone has looked at it</td><td><code>exclude-newer = "7 days"</code> under <code>[tool.uv]</code> (uv 0.9.17+); exempt one package with <code>exclude-newer-package</code> when a security patch can't wait</td></tr>
     <tr><td>run agents sandboxed / least-privilege</td><td>a destructive or injected command hitting real systems</td><td>containers, scoped tokens, no prod creds in the agent's env</td></tr>
     <tr><td>require approval for agent actions</td><td>irreversible steps taken without you</td><td>the tool's "ask before running / applying" mode: keep it on</td></tr>
   </table></div>
@@ -456,7 +457,7 @@ conn = connect(
       <div class="bounty"><b>THE FIX</b>Send the minimal relevant snippet. Less to leak, and the model answers better with less noise.</div></div>
     <div class="poster"><span class="star">★ WANTED ★</span><span class="mug">👻</span><h4>The Hallucination Shipper</h4>
       <p class="crime"><strong>Crime:</strong> merged a call to <code>pandas.read_parquet_fast()</code>. It doesn't exist. Neither did the package the AI told them to <code>pip install</code>.</p>
-      <div class="bounty"><b>THE FIX</b>Verify functions and packages exist before using them: hallucinated package names are also a supply-chain attack vector ("slopsquatting").</div></div>
+      <div class="bounty"><b>THE FIX</b>Verify functions and packages exist before using them: hallucinated package names are also a supply-chain attack vector ("slopsquatting"). A dependency cooldown (§06) also keeps a freshly published impostor out of your lockfile for its first week.</div></div>
     <div class="poster"><span class="star">★ WANTED ★</span><span class="mug">🤖</span><h4>The Unleashed Agent</h4>
       <p class="crime"><strong>Crime:</strong> gave an agent prod credentials and "auto-approve all," went to lunch. Came back to a migration it ran on the wrong database.</p>
       <div class="bounty"><b>THE FIX</b>Sandbox agents, scoped tokens, no prod creds in reach, approval required for irreversible actions.</div></div>
